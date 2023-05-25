@@ -8,11 +8,11 @@ const getAllPokemons = async (req, res) => {
     } else {
       res.status(200).json({ success: true, data: pokemons });
     }
-  } catch (err) {
-    console.log(err);
+  } catch (error) {
+    console.log(error);
     res.status(500).json({
       success: false,
-      err,
+      error,
     });
   }
 };
@@ -27,10 +27,10 @@ const getOnePokemon = async (req, res) => {
       res.status(200).json({ success: true, data: pokemon });
     }
   } catch (error) {
-    console.log(err);
+    console.log(error);
     res.status(500).json({
       success: false,
-      err,
+      error,
     });
   }
 };
