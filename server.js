@@ -8,6 +8,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 const pokemons = require("./routes/pokemon");
+const creators = require("./routes/creator");
 
 const connectDB = require("./dbinit");
 
@@ -15,6 +16,7 @@ const port = process.env.PORT || 5555;
 connectDB();
 
 app.use("/pokemons", pokemons);
+app.use("/creators", creators);
 
 app.get("/", (req, res) => {
   res.send("Fetch 'em all!");
