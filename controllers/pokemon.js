@@ -1,5 +1,7 @@
 const Pokemon = require("../schemas/Pokemon");
 
+const NUM_POKES_PER_PAGE = 12;
+
 const getAllPokemons = async (req, res) => {
   try {
     const pokemons = await Pokemon.find();
@@ -62,4 +64,70 @@ const getOnePokemon = async (req, res) => {
 // };
 // insertSpriteUrl();
 
-module.exports = { getAllPokemons, getOnePokemon };
+const getPokesByFilters = async (req, res) => {
+  try {
+    const {
+      type,
+      minHP,
+      maxHP,
+      minAttack,
+      maxAttack,
+      minDefense,
+      maxDefense,
+      minSpeed,
+      maxSpeed,
+      page,
+    } = req.body;
+
+    const toSkip = NUM_POKES_PER_PAGE * page;
+
+    if (!type.length) {
+      const pokemons = await Pokemon.find({
+        $and: [
+          { "base.HP": { $gte: minHP } },
+          { "base.HP": { $lte: maxHP } },
+          { "base.Attack": { $gte: minAttack } },
+          { "base.Attack": { $lte: maxAttack } },
+          { "base.Defense": { $gte: minDefense } },
+          { "base.Defense": { $lte: maxDefense } },
+          { "base.Speed": { $gte: minSpeed } },
+          { "base.Speed": { $lte: maxSpeed } },
+        ],
+      })
+        .sort({ id: 1 })
+        .skip(toSkip)
+        .limit(NUM_POKES_PER_PAGE);
+      if (!pokemons || !pokemons.length)
+        return res.status(404).json({ msg: "No pokemon", data: pokemons });
+      res.status(200).json({ data: pokemons });
+    } else {
+      const pokemons = await Pokemon.find({
+        $and: [
+          { type: { $all: [...type] } },
+          { "base.HP": { $gte: minHP } },
+          { "base.HP": { $lte: maxHP } },
+          { "base.Attack": { $gte: minAttack } },
+          { "base.Attack": { $lte: maxAttack } },
+          { "base.Defense": { $gte: minDefense } },
+          { "base.Defense": { $lte: maxDefense } },
+          { "base.Speed": { $gte: minSpeed } },
+          { "base.Speed": { $lte: maxSpeed } },
+        ],
+      })
+        .sort({ id: 1 })
+        .skip(toSkip)
+        .limit(NUM_POKES_PER_PAGE);
+      if (!pokemons || !pokemons.length)
+        return res.status(404).json({ msg: "No pokemon", data: pokemons });
+      res.status(200).json({ data: pokemons });
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      success: false,
+      error,
+    });
+  }
+};
+
+module.exports = { getAllPokemons, getOnePokemon, getPokesByFilters };
