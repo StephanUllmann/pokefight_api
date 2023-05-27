@@ -22,6 +22,11 @@ app.get("/", (req, res) => {
   res.send("Fetch 'em all!");
 });
 
+// app.post("/filtered", (req, res) => {
+//   console.log(req.body);
+//   res.send(200).json({ mgs: "received" });
+// });
+
 app.listen(port, () => {
   console.log(`listening on http://localhost:${port}`.random);
 });
