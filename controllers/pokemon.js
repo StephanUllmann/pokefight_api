@@ -21,12 +21,26 @@ const getAllPokemons = async (req, res) => {
 
 const getOnePokemon = async (req, res) => {
   try {
-    const { id } = req.params;
-    const pokemon = await Pokemon.findById(id);
-    if (!pokemon) {
-      res.status(404).json({ msg: "Not found" });
+    const { idOrName } = req.params;
+    const queryTerm = idOrName.trimStart();
+    const parsedId = parseInt(queryTerm);
+
+    if (isFinite(parsedId)) {
+      const pokemon = await Pokemon.find({ id: parsedId });
+      if (!pokemon) {
+        res.status(404).json({ msg: "Not found" });
+      } else {
+        res.status(200).json({ success: true, data: pokemon });
+      }
     } else {
-      res.status(200).json({ success: true, data: pokemon });
+      const processedString =
+        queryTerm[0].toUpperCase() + queryTerm.slice(1).toLowerCase();
+      const pokemon = await Pokemon.find({ "name.english": processedString });
+      if (!pokemon) {
+        res.status(404).json({ msg: "Not found" });
+      } else {
+        res.status(200).json({ success: true, data: pokemon });
+      }
     }
   } catch (error) {
     console.log(error);

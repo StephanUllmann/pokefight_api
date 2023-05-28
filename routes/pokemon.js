@@ -8,7 +8,7 @@ const {
 } = require("../controllers/pokemon");
 
 api.route("/").get(getAllPokemons);
-api.route("/:id").get(getOnePokemon);
+api.route("/:idOrName").get(getOnePokemon);
 api.route("/filtered").post(getPokesByFilters);
 
 module.exports = api;
