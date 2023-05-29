@@ -96,6 +96,22 @@ const getPokesByFilters = async (req, res) => {
     const toSkip = NUM_POKES_PER_PAGE * page;
 
     if (!type.length) {
+      const pokeAmount = await Pokemon.count({
+        $and: [
+          { "base.HP": { $gte: minHP } },
+          { "base.HP": { $lte: maxHP } },
+          { "base.Attack": { $gte: minAttack } },
+          { "base.Attack": { $lte: maxAttack } },
+          { "base.Defense": { $gte: minDefense } },
+          { "base.Defense": { $lte: maxDefense } },
+          { "base.Speed": { $gte: minSpeed } },
+          { "base.Speed": { $lte: maxSpeed } },
+        ],
+      });
+      if (pokeAmount === 0)
+        return res
+          .status(404)
+          .json({ msg: "No pokemon", amount: pokeAmount, data: [] });
       const pokemons = await Pokemon.find({
         $and: [
           { "base.HP": { $gte: minHP } },
@@ -111,10 +127,27 @@ const getPokesByFilters = async (req, res) => {
         .sort({ id: 1 })
         .skip(toSkip)
         .limit(NUM_POKES_PER_PAGE);
-      if (!pokemons || !pokemons.length)
-        return res.status(404).json({ msg: "No pokemon", data: pokemons });
-      res.status(200).json({ data: pokemons });
+      res.status(200).json({ data: pokemons, amount: pokeAmount });
     } else {
+      const pokeAmount = await Pokemon.count({
+        $and: [
+          { type: { $all: [...type] } },
+          { "base.HP": { $gte: minHP } },
+          { "base.HP": { $lte: maxHP } },
+          { "base.Attack": { $gte: minAttack } },
+          { "base.Attack": { $lte: maxAttack } },
+          { "base.Defense": { $gte: minDefense } },
+          { "base.Defense": { $lte: maxDefense } },
+          { "base.Speed": { $gte: minSpeed } },
+          { "base.Speed": { $lte: maxSpeed } },
+        ],
+      });
+
+      if (pokeAmount === 0)
+        return res
+          .status(404)
+          .json({ msg: "No pokemon", amount: pokeAmount, data: [] });
+
       const pokemons = await Pokemon.find({
         $and: [
           { type: { $all: [...type] } },
@@ -131,9 +164,7 @@ const getPokesByFilters = async (req, res) => {
         .sort({ id: 1 })
         .skip(toSkip)
         .limit(NUM_POKES_PER_PAGE);
-      if (!pokemons || !pokemons.length)
-        return res.status(404).json({ msg: "No pokemon", data: pokemons });
-      res.status(200).json({ data: pokemons });
+      res.status(200).json({ data: pokemons, amount: pokeAmount });
     }
   } catch (error) {
     console.log(error);
