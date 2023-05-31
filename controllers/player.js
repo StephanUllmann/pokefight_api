@@ -2,7 +2,7 @@ const Player = require("../schemas/Player");
 
 const getTopPlayers = async (req, res) => {
   try {
-    const players = await Player.find().limit(10);
+    const players = await Player.find().sort({ points: -1 }).limit(10);
     if (!players.length)
       return res.status(200).json({ msg: "There are no players yet" });
     res.status(200).json({ data: players });
