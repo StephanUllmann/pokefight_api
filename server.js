@@ -9,6 +9,7 @@ app.use(express.urlencoded({ extended: true }));
 
 const pokemons = require("./routes/pokemon");
 const creators = require("./routes/creator");
+const players = require("./routes/player");
 
 const connectDB = require("./dbinit");
 
@@ -17,6 +18,7 @@ connectDB();
 
 app.use("/pokemons", pokemons);
 app.use("/creators", creators);
+app.use("/players", players);
 
 app.get("/", (req, res) => {
   res.send("Fetch 'em all!");
