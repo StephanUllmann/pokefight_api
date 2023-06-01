@@ -1,4 +1,54 @@
 const Player = require("../schemas/Player");
+const Pokemon = require("../schemas/Pokemon");
+
+const getPlayerByNameOrCreate = async (req, res) => {
+  const { playerName } = req.params;
+  // console.log(req.params);
+  try {
+    let player = await Player.findOne({ name: playerName });
+    if (!player) player = await Player.create({ name: playerName });
+    const queries = player.catchedPokemons.map((pokeId) => {
+      return {
+        id: pokeId,
+      };
+    });
+    const pokemons = await Pokemon.find({ $or: [...queries] });
+    // console.log(pokemons);
+
+    if (!pokemons.length) {
+      res.status(200).json({ msg: `${player.catchedPokemons} not found` });
+    } else {
+      res.status(200).json({ success: true, data: pokemons, player });
+    }
+  } catch (error) {
+    res.status(500).json({ error });
+  }
+};
+
+const catchPokemon = async (req, res) => {
+  const { playerName, pokeId } = req.params;
+  try {
+    const player = await Player.findOneAndUpdate(
+      { name: playerName },
+      { $addToSet: { catchedPokemons: pokeId } },
+      { new: true }
+    );
+    const queries = player.catchedPokemons.map((pokeId) => {
+      return {
+        id: pokeId,
+      };
+    });
+    const pokemons = await Pokemon.find({ $or: [...queries] });
+
+    if (!pokemons.length) {
+      res.status(200).json({ msg: `${player.catchedPokemons} not found` });
+    } else {
+      res.status(200).json({ success: true, data: pokemons, player });
+    }
+  } catch (error) {
+    res.status(500).json({ error });
+  }
+};
 
 const getTopPlayers = async (req, res) => {
   try {
@@ -36,4 +86,9 @@ const updateSinglePlayerScores = async (req, res) => {
   }
 };
 
-module.exports = { getTopPlayers, updateSinglePlayerScores };
+module.exports = {
+  getTopPlayers,
+  updateSinglePlayerScores,
+  getPlayerByNameOrCreate,
+  catchPokemon,
+};
