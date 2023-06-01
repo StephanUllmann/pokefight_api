@@ -51,6 +51,27 @@ const getOnePokemon = async (req, res) => {
   }
 };
 
+const getPokesByArray = async (req, res) => {
+  const { pokeArr } = req.body;
+  const queries = pokeArr.map((pokeId) => {
+    id: pokeId;
+  });
+  try {
+    const pokemons = await Pokemon.find({ $and: [...queries] });
+    if (!pokemons.length) {
+      res.status(200).json({ msg: `${pokeArr} not found` });
+    } else {
+      res.status(200).json({ success: true, data: pokemons });
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      success: false,
+      error,
+    });
+  }
+};
+
 // const insertSpriteUrl = async (req, res) => {
 //   try {
 //     const allPokes = await Pokemon.find();                    //fetch all pokemons from mongoDB as array of objects
@@ -175,4 +196,9 @@ const getPokesByFilters = async (req, res) => {
   }
 };
 
-module.exports = { getAllPokemons, getOnePokemon, getPokesByFilters };
+module.exports = {
+  getAllPokemons,
+  getOnePokemon,
+  getPokesByFilters,
+  getPokesByArray,
+};
