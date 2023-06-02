@@ -9,8 +9,8 @@ const {
 const api = express.Router();
 
 api.route("/").put(updateSinglePlayerScores);
-api.route("/:playerName").get(getPlayerByNameOrCreate);
-api.route("/:playerName/:pokeId").put(catchPokemon);
 api.route("/top").get(getTopPlayers);
+api.route("/catchedPokes/:playerName").get(getPlayerByNameOrCreate);
+api.route("/catchedPokes/:playerName/:pokeId").put(catchPokemon);
 
 module.exports = api;
