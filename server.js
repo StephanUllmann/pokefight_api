@@ -10,13 +10,12 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 const limiter = rateLimit({
-  windowMs: 60 * 1000, // 15 minutes
-  max: 25, // Limit each IP to 100 requests per `window` (here, per 15 minutes)
+  windowMs: 6000, // 6 seconds
+  max: 1, // Limit each IP to 1 requests per 6 seconds
   standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
   legacyHeaders: false, // Disable the `X-RateLimit-*` headers
 });
 
-// Apply the rate limiting middleware to all requests
 app.use("/players", limiter);
 
 const pokemons = require("./routes/pokemon");
