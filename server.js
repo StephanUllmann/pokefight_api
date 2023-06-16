@@ -3,7 +3,7 @@ const app = express();
 const cors = require("cors");
 const rateLimit = require("express-rate-limit");
 
-app.use(cors({ origin: "https://wbs-pokefight.netlify.app/" }));
+app.use(cors({ origin: "https://wbs-pokefight.netlify.app" }));
 require("colors");
 require("dotenv").config();
 app.use(express.json());
