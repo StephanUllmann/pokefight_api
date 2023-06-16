@@ -64,6 +64,8 @@ const getTopPlayers = async (req, res) => {
 const updateSinglePlayerScores = async (req, res) => {
   try {
     const { name, wonGames, lostGames, points } = req.body;
+    if (points > 18) return res.status(418).json({ msg: "No way!" });
+    if (wonGames > 1) return res.status(418).json({ msg: "No way!" });
     const player = await Player.findOneAndUpdate(
       { name: name },
       {
